@@ -1,0 +1,145 @@
+.form-card {
+  background: #fff;
+  padding: 32px;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-light);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.form-card h2 {
+  margin-bottom: 24px;
+  text-align: center;
+  color: var(--color-text);
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+  border-color: var(--color-main);
+}
+
+.field-tip {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: -4px;
+}
+
+/* 画像アップロード関連スタイル */
+.file-input-wrapper {
+  position: relative;
+  background: #f9f9f9;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-hint {
+  color: #888;
+}
+
+.image-preview-list {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.preview-item {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid var(--color-sub);
+}
+
+.preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-img-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.form-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.save-btn {
+  flex: 2;
+  background-color: var(--color-search-btn);
+  color: #fff;
+  padding: 14px;
+  border-radius: var(--radius-btn);
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.cancel-btn {
+  flex: 1;
+  background-color: #eee;
+  color: #666;
+  padding: 14px;
+  border-radius: var(--radius-btn);
+  font-weight: bold;
+}
+
+.save-btn:hover {
+  background-color: #E27B56;
+}

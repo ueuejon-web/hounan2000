@@ -1,0 +1,11 @@
+.concept-section {
+  text-align: center;
+  margin: 32px 0 24px;
+}
+
+.concept-text {
+  color: var(--color-text);
+  font-weight: bold;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+}

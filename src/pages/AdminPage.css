@@ -1,0 +1,94 @@
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.admin-header h2 {
+  color: var(--color-text);
+  font-size: 1.5rem;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.admin-add-btn {
+  background-color: var(--color-search-btn);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: var(--radius-btn);
+  font-weight: bold;
+}
+
+.admin-back-home {
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  border-radius: var(--radius-btn);
+  color: #666;
+}
+
+.admin-table-container {
+  background: #fff;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-light);
+  overflow: hidden;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th, .admin-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-table th {
+  background: #f9f9f9;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.admin-thumb {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.admin-name {
+  font-weight: bold;
+  color: var(--color-main);
+}
+
+.admin-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-edit-link {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.admin-delete-btn {
+  color: #dc3545;
+  cursor: pointer;
+}
+
+.admin-delete-btn:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

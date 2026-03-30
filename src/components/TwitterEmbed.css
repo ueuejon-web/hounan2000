@@ -1,0 +1,8 @@
+.twitter-embed {
+  background-color: var(--color-card-bg);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-light);
+  padding: 16px;
+  overflow: hidden;
+  height: max-content;
+}
