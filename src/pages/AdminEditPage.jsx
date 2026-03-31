@@ -9,6 +9,7 @@ const AdminEditPage = ({ members = [], onSave }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = Boolean(id);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -71,10 +72,17 @@ const AdminEditPage = ({ members = [], onSave }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
-    navigate('/admin');
+    setIsSaving(true);
+    try {
+      await onSave(formData);
+      navigate('/admin');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (

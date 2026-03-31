@@ -5,44 +5,51 @@ import DetailPage from './pages/DetailPage';
 import AdminPage from './pages/AdminPage';
 import AdminEditPage from './pages/AdminEditPage';
 import AdminIntroPage from './pages/AdminIntroPage';
-import { mockMembers } from './data/mockMembers';
+import { fetchMembers, saveMember, deleteMemberFromDB } from './services/api.js';
 import './App.css';
 import { Link } from 'react-router-dom';
 
 function App() {
-  // 初回のみmockMembersから読み込み、以降はStateで管理
-  const [members, setMembers] = useState(() => {
-    const saved = localStorage.getItem('honan_members');
-    let data = saved ? JSON.parse(saved) : mockMembers;
-    
-    // データマイグレーション: image(文字列)をimages(配列)に変換
-    return data.map(m => {
-      if (m.image && !m.images) {
-        return { ...m, images: [m.image], image: undefined };
-      }
-      if (!m.images) {
-        return { ...m, images: [] };
-      }
-      return m;
-    });
-  });
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // membersが更新されたらlocalStorageに保存
+  // 起動時にGASからデータを取得
   useEffect(() => {
-    localStorage.setItem('honan_members', JSON.stringify(members));
-  }, [members]);
+    const loadData = async () => {
+      setLoading(true);
+      const data = await fetchMembers();
+      setMembers(data);
+      setLoading(false);
+    };
+    loadData();
+  }, []);
 
-  const addMember = (newMember) => {
-    setMembers(prev => [...prev, { ...newMember, id: Date.now(), created_at: new Date().toISOString() }]);
+  const addMember = async (newMember) => {
+    try {
+      const saved = await saveMember(newMember);
+      setMembers(prev => [...prev, saved]);
+    } catch (error) {
+      alert('保存に失敗しました');
+    }
   };
 
-  const updateMember = (updatedMember) => {
-    setMembers(prev => prev.map(m => m.id === updatedMember.id ? updatedMember : m));
+  const updateMember = async (updatedMember) => {
+    try {
+      await saveMember(updatedMember);
+      setMembers(prev => prev.map(m => m.id === updatedMember.id ? updatedMember : m));
+    } catch (error) {
+      alert('更新に失敗しました');
+    }
   };
 
-  const deleteMember = (id) => {
+  const deleteMember = async (id) => {
     if (window.confirm('本当に削除してもよろしいですか？')) {
-      setMembers(prev => prev.filter(m => m.id !== id));
+      try {
+        await deleteMemberFromDB(id);
+        setMembers(prev => prev.filter(m => m.id !== id));
+      } catch (error) {
+        alert('削除に失敗しました');
+      }
     }
   };
 
@@ -50,7 +57,7 @@ function App() {
     <Router>
       <div className="app-container">
         <Routes>
-          <Route path="/" element={<HomePage members={members} />} />
+          <Route path="/" element={loading ? <div className="loading">読み込み中...</div> : <HomePage members={members} />} />
           <Route path="/member/:id" element={<DetailPage members={members} />} />
           <Route 
             path="/admin" 

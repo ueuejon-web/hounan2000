@@ -30,7 +30,13 @@ const AdminPage = ({ members, onDelete }) => {
             <tbody>
               {members.map(member => (
                 <tr key={member.id}>
-                  <td><img src={member.image} alt="" className="admin-thumb" /></td>
+                  <td>
+                    {member.images && member.images.length > 0 ? (
+                      <img src={member.images[0]} alt="" className="admin-thumb" />
+                    ) : (
+                      <div className="admin-thumb-placeholder">No Image</div>
+                    )}
+                  </td>
                   <td className="admin-name">{member.name}</td>
                   <td>{member.job}</td>
                   <td>{member.category}</td>

@@ -1,12 +1,38 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './AdminIntroPage.css';
 
 const AdminIntroPage = () => {
+  const navigate = useNavigate();
+  const [clickCount, setClickCount] = useState(0);
+  const clickTimeoutRef = useRef(null);
+
+  const handleLogoClick = () => {
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+    }
+    const newCount = clickCount + 1;
+    setClickCount(newCount);
+
+    if (newCount >= 5) {
+      setClickCount(0);
+      navigate('/admin'); // 5回クリックで管理者画面へ
+    } else {
+      // 1秒以内に次のクリックがなければリセット
+      clickTimeoutRef.current = setTimeout(() => {
+        setClickCount(0);
+      }, 1000);
+    }
+  };
+
   return (
     <div className="admin-intro-container">
       <div className="admin-intro-content">
-        <div className="admin-intro-logo">
+        <div 
+          className="admin-intro-logo" 
+          onClick={handleLogoClick} 
+          style={{ cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}
+        >
           <img src="/footer-logo.png" alt="上ブ.デザイン" />
         </div>
         
