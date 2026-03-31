@@ -3,7 +3,7 @@
  */
 export default async function handler(req, res) {
   // 以前のGASウェブアプリURL (最新版)
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbwifR2bvqrXFB5tPi1WXY6JUR81kSg28PK-CcmLEMrT4tLM6lwgrKuV2HOktiBjxTI6wA/exec';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbwr-TOtZJ6TuSyPqfqUykW9-25N9BlKd52g4nH83vl99jZlWTWtl0TvC1NPoDOAgOgkkQ/exec';
 
   try {
     // GASへの転送設定
