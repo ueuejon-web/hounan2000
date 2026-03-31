@@ -4,7 +4,7 @@
  */
 
 // GASをデプロイした後に発行されるウェブアプリのURLをここに貼り付けてください
-const GAS_WEBAPP_URL = 'YOUR_GAS_WEBAPP_URL_HERE';
+const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbw0JPbirxWlf652efjAq6I5jaLbJzeXMYh8v6eQdRCtBW9gn10vuxdDG3_kVx31rifGQw/exec';
 
 /**
  * メンバー一覧を取得
@@ -14,13 +14,13 @@ export const fetchMembers = async () => {
     const response = await fetch(GAS_WEBAPP_URL);
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
-    
+
     // データの正規化: images が文字列で来た場合に配列に変換する
     return data.map(m => ({
       ...m,
       id: Number(m.id), // IDを数値に確実に変換
-      images: Array.isArray(m.images) 
-        ? m.images 
+      images: Array.isArray(m.images)
+        ? m.images
         : (typeof m.images === 'string' ? m.images.split(',').filter(Boolean) : [])
     }));
   } catch (error) {

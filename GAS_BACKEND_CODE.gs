@@ -12,8 +12,8 @@
  */
 
 const SPREADSHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
-const SHEET_NAME = 'シート1'; // シート名に合わせて変更してください
-const DRIVE_FOLDER_ID = 'YOUR_DRIVE_FOLDER_ID_HERE'; // 画像を保存するフォルダID
+const SHEET_NAME = '豊南ポータルサイトメンバーカード';
+const DRIVE_FOLDER_ID = '1bw9jhwTg1BbAN2FyqVKDQx8cHGnUwGeJ';
 
 function doGet(e) {
   const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
