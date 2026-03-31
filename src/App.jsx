@@ -34,7 +34,7 @@ function App() {
       }
     } catch (error) {
       console.error('Add member error:', error);
-      alert('保存に失敗しました');
+      alert(`保存に失敗しました: ${error.message}`);
     }
   };
 
@@ -48,7 +48,7 @@ function App() {
       }
     } catch (error) {
       console.error('Update member error:', error);
-      alert('更新に失敗しました');
+      alert(`更新に失敗しました: ${error.message}`);
     }
   };
 
