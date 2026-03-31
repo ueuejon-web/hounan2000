@@ -25,12 +25,20 @@ export default async function handler(req, res) {
     };
 
     const response = await fetch(url.toString(), fetchOptions);
-    const data = await response.json();
+    
+    // Googleからの生の情報を取得
+    const text = await response.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      // JSONでない場合（HTMLエラーなど）はテキストとして返す
+      data = { status: 'non-json', message: text };
+    }
 
-    // GASからのレスポンスをそのまま返す
     res.status(response.status).json(data);
   } catch (error) {
-    console.error('Proxy error:', error);
-    res.status(500).json({ error: 'Proxy failed', message: error.message });
+    console.error('Proxy internal error:', error);
+    res.status(500).json({ status: 'proxy-error', message: error.message, stack: error.stack });
   }
 }
