@@ -3,7 +3,7 @@
  */
 
 const SPREADSHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
-const SHEET_NAME = '豊南ポータルサイトメンバーカード';
+const SHEET_NAME = 'シート1';
 const DRIVE_FOLDER_ID = '1bw9jhwTg1BbAN2FyqVKDQx8cHGnUwGeJ';
 
 // GETリクエスト（データ取得および予備の操作用）
