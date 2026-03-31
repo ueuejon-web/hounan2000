@@ -26,18 +26,28 @@ function App() {
 
   const addMember = async (newMember) => {
     try {
-      const saved = await saveMember(newMember);
-      setMembers(prev => [...prev, saved]);
+      const result = await saveMember(newMember);
+      if (result.status === 'success') {
+        setMembers(prev => [...prev, result.data]);
+      } else {
+        throw new Error(result.message);
+      }
     } catch (error) {
+      console.error('Add member error:', error);
       alert('保存に失敗しました');
     }
   };
 
   const updateMember = async (updatedMember) => {
     try {
-      await saveMember(updatedMember);
-      setMembers(prev => prev.map(m => m.id === updatedMember.id ? updatedMember : m));
+      const result = await saveMember(updatedMember);
+      if (result.status === 'success') {
+        setMembers(prev => prev.map(m => String(m.id) === String(updatedMember.id) ? result.data : m));
+      } else {
+        throw new Error(result.message);
+      }
     } catch (error) {
+      console.error('Update member error:', error);
       alert('更新に失敗しました');
     }
   };
@@ -46,7 +56,7 @@ function App() {
     if (window.confirm('本当に削除してもよろしいですか？')) {
       try {
         await deleteMemberFromDB(id);
-        setMembers(prev => prev.filter(m => m.id !== id));
+        setMembers(prev => prev.filter(m => String(m.id) !== String(id)));
       } catch (error) {
         alert('削除に失敗しました');
       }

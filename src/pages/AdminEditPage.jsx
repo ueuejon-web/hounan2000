@@ -26,7 +26,7 @@ const AdminEditPage = ({ members = [], onSave }) => {
 
   useEffect(() => {
     if (isEdit && members.length > 0) {
-      const member = members.find(m => m.id === parseInt(id));
+      const member = members.find(m => String(m.id) === String(id));
       if (member) {
         setFormData({
           ...member,

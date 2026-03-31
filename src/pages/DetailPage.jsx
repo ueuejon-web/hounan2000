@@ -5,7 +5,7 @@ import './DetailPage.css';
 
 const DetailPage = ({ members = [] }) => {
   const { id } = useParams();
-  const member = members.find(m => m.id === parseInt(id));
+  const member = members.find(m => String(m.id) === String(id));
 
   if (!member) {
     return (

@@ -1,29 +1,31 @@
 /**
- * 豊南中2000年卒ポータル - Backend GAS Script (CORS対応・安定版)
+ * 豊南中2000年卒ポータル - Backend GAS Script (最終安定版)
+ * 2026/04/01 更新
  */
 
-const SPREADSHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
+// スプレッドシートIDを固定
+const SPREADSHEET_ID = '19R-_QYN5kKL204E6-tXWeQZJhE0P_1XZALnweOkB-yE';
 const SHEET_NAME = 'シート1';
 const DRIVE_FOLDER_ID = '1bw9jhwTg1BbAN2FyqVKDQx8cHGnUwGeJ';
 
-// GETリクエスト（データ取得および予備の操作用）
 function doGet(e) {
   try {
     const action = e.parameter.action;
     const sheet = getTargetSheet();
     
-    // アクションの分岐
     if (action === 'save' || action === 'delete') {
-      // GET経由での書き込み（POSTがブロックされる際のエスケープ用）
       return handlePostRequest(e.parameter);
     }
     
-    // デフォルト：データ一覧取得
+    // データ取得
     const data = sheet.getDataRange().getValues();
     const headers = data.shift();
     const json = data.map(row => {
       let obj = {};
-      headers.forEach((h, i) => obj[h] = row[i]);
+      headers.forEach((h, i) => {
+        // IDは常に文字列として扱う
+        obj[h] = (h === 'id') ? String(row[i]) : row[i];
+      });
       return obj;
     });
     
@@ -34,7 +36,6 @@ function doGet(e) {
   }
 }
 
-// POSTリクエスト（データ保存・削除用）
 function doPost(e) {
   try {
     const params = JSON.parse(e.postData.contents);
@@ -45,7 +46,6 @@ function doPost(e) {
   }
 }
 
-// 保存・削除の共通処理
 function handlePostRequest(params) {
   const sheet = getTargetSheet();
   const action = params.action;
@@ -63,28 +63,38 @@ function handleSave(member, sheet) {
   const headers = data[0];
   const rows = data.slice(1);
   
-  // 画像の処理 (Base64 -> Google Drive URL)
+  // 1. IDの採番（新規の場合）
+  if (!member.id) {
+    member.id = Utilities.getUuid();
+  } else {
+    member.id = String(member.id);
+  }
+
+  // 2. 画像の処理
   if (member.images && member.images.length > 0) {
     member.images = member.images.map(img => {
       if (typeof img === 'string' && img.startsWith('http')) return img;
       return uploadToDrive(img, member.name);
-    }).filter(Boolean).join(',');
+    }).filter(Boolean).sort().join(','); // URLリストとしてカンマ区切りで保存
   } else {
-    member.images = member.images || '';
+    member.images = '';
   }
 
+  // 3. 行の特定
   let rowIndex = rows.findIndex(r => String(r[0]) === String(member.id));
   
+  // 4. 書き込み用データの配列作成
   const newRow = headers.map(h => {
     if (h === 'created_at' && !member[h]) return new Date();
-    if (h === 'id' && !member[h]) return Utilities.getUuid();
-    // スプレッドシート側のヘッダー名と一致するデータを格納
+    // メンバーオブジェクトから対応するキーの値を抽出
     return member[h] !== undefined ? member[h] : '';
   });
 
   if (rowIndex > -1) {
+    // 更新 (スプレッドシートは1-indexed, 2行目からデータ開始)
     sheet.getRange(rowIndex + 2, 1, 1, headers.length).setValues([newRow]);
   } else {
+    // 新規追加
     sheet.appendRow(newRow);
   }
   
@@ -102,13 +112,11 @@ function handleDelete(id, sheet) {
   return createJsonResponse({ status: 'success' });
 }
 
-// 共通レスポンス生成 (CORS対策)
 function createJsonResponse(data) {
   return ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// シート取得
 function getTargetSheet() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   let sheet = ss.getSheetByName(SHEET_NAME);
@@ -116,7 +124,6 @@ function getTargetSheet() {
   return sheet;
 }
 
-// 画像アップロード
 function uploadToDrive(base64Data, itemName) {
   try {
     const folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
@@ -132,7 +139,6 @@ function uploadToDrive(base64Data, itemName) {
   }
 }
 
-// エラーログ記録シートへの自動記録
 function logError(tag, error) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);

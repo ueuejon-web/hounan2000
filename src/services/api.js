@@ -18,7 +18,7 @@ export const fetchMembers = async () => {
     // データの正規化: images が文字列で来た場合に配列に変換する
     return data.map(m => ({
       ...m,
-      id: Number(m.id), // IDを数値に確実に変換
+      id: String(m.id), // IDを文字列として確実に扱う
       images: Array.isArray(m.images)
         ? m.images
         : (typeof m.images === 'string' ? m.images.split(',').filter(Boolean) : [])
