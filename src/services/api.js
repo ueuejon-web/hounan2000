@@ -34,18 +34,30 @@ export const fetchMembers = async () => {
  */
 export const saveMember = async (memberData) => {
   try {
+    // CORS Preflightを避けるため、あえてContent-Typeを設定せず、
+    // プレーンテキストとしてJSONを送ります。GAS側はこれを受け取れます。
     const response = await fetch(GAS_WEBAPP_URL, {
       method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      redirect: 'follow', // 重要: GASのリダイレクトに追従
       body: JSON.stringify({
         action: 'save',
         data: memberData
       }),
     });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Server responded with ${response.status}: ${errorText}`);
+    }
+
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error('Save member error:', error);
-    throw error;
+    console.error('Save member error detail:', error);
+    // CORSエラーが起きている可能性があるため、より親切なエラーを投げる
+    throw new Error('データの保存中にエラーが発生しました。GAS側の設定（Anyoneアクセス等）を再確認してください。');
   }
 };
 
@@ -56,6 +68,8 @@ export const deleteMemberFromDB = async (id) => {
   try {
     const response = await fetch(GAS_WEBAPP_URL, {
       method: 'POST',
+      mode: 'cors',
+      redirect: 'follow',
       body: JSON.stringify({
         action: 'delete',
         id: id
