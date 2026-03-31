@@ -3,8 +3,8 @@
  * Google Apps Script (GAS) との通信を担当します
  */
 
-// GASをデプロイした後に発行されるウェブアプリのURLをここに貼り付けてください
-const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbw0JPbirxWlf652efjAq6I5jaLbJzeXMYh8v6eQdRCtBW9gn10vuxdDG3_kVx31rifGQw/exec';
+// Vercelプロキシ（api/proxy.js）の相対パス
+const GAS_WEBAPP_URL = '/api/proxy';
 
 /**
  * メンバー一覧を取得
@@ -34,13 +34,12 @@ export const fetchMembers = async () => {
  */
 export const saveMember = async (memberData) => {
   try {
-    // CORS Preflightを避けるため、あえてContent-Typeを設定せず、
-    // プレーンテキストとしてJSONを送ります。GAS側はこれを受け取れます。
+    // 自前のVercelプロキシを叩くため、標準的なJSON通信が可能です
     const response = await fetch(GAS_WEBAPP_URL, {
       method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      redirect: 'follow', // 重要: GASのリダイレクトに追従
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         action: 'save',
         data: memberData
@@ -56,8 +55,7 @@ export const saveMember = async (memberData) => {
     return result;
   } catch (error) {
     console.error('Save member error detail:', error);
-    // CORSエラーが起きている可能性があるため、より親切なエラーを投げる
-    throw new Error('データの保存中にエラーが発生しました。GAS側の設定（Anyoneアクセス等）を再確認してください。');
+    throw new Error('データの保存中にエラーが発生しました。Vercelプロキシの動作を確認してください。');
   }
 };
 
@@ -68,8 +66,9 @@ export const deleteMemberFromDB = async (id) => {
   try {
     const response = await fetch(GAS_WEBAPP_URL, {
       method: 'POST',
-      mode: 'cors',
-      redirect: 'follow',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         action: 'delete',
         id: id
