@@ -60,6 +60,7 @@ const DetailPage = ({ members = [] }) => {
               src={member.images && member.images.length > 0 ? member.images[0] : ""} 
               alt={member.name} 
               className="detail-image" 
+              referrerPolicy="no-referrer"
             />
             <div className="detail-title">
               <h2>{member.name}</h2>
@@ -76,7 +77,11 @@ const DetailPage = ({ members = [] }) => {
                 {member.images.map((img, idx) => (
                   <div key={idx} className="gallery-item">
                      <a href={img} target="_blank" rel="noopener noreferrer">
-                        <img src={img} alt={`${member.name} ${idx + 1}`} />
+                        <img 
+                          src={img} 
+                          alt={`${member.name} ${idx + 1}`} 
+                          referrerPolicy="no-referrer"
+                        />
                      </a>
                   </div>
                 ))}

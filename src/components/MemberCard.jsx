@@ -10,7 +10,12 @@ const MemberCard = ({ member }) => {
     <Link to={`/member/${member.id}`} className="member-card">
       <div className="card-image-wrap">
         {thumbnail ? (
-          <img src={thumbnail} alt={member.name} className="card-image" />
+          <img 
+            src={thumbnail} 
+            alt={member.name} 
+            className="card-image" 
+            referrerPolicy="no-referrer"
+          />
         ) : (
           <div className="card-image-placeholder">
             <span className="rose-icon">🌹</span>

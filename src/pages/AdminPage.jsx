@@ -32,7 +32,12 @@ const AdminPage = ({ members, onDelete }) => {
                 <tr key={member.id}>
                   <td>
                     {member.images && member.images.length > 0 ? (
-                      <img src={member.images[0]} alt="" className="admin-thumb" />
+                      <img 
+                        src={member.images[0]} 
+                        alt="" 
+                        className="admin-thumb" 
+                        referrerPolicy="no-referrer"
+                      />
                     ) : (
                       <div className="admin-thumb-placeholder">No Image</div>
                     )}
