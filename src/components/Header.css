@@ -30,7 +30,8 @@
   mix-blend-mode: multiply; /* 白背景を透過させる */
   pointer-events: none;
   filter: brightness(1.1) contrast(1.1);
-  animation: fadeIn 1.5s ease-out;
+  position: relative;
+  z-index: 1;
 }
 
 .deco-left {
@@ -42,20 +43,19 @@
 }
 
 @media (max-width: 768px) {
+  .site-header {
+    padding: 15px 0;
+  }
   .site-logo {
-    max-width: 280px;
+    max-width: 320px; /* 横幅を拡大 */
+    width: 90%;
   }
   .header-deco {
-    width: 60px;
+    width: 50px; /* 薔薇を少し小さくしてロゴのスペースを確保 */
   }
   .header-content {
-    gap: 10px;
+    gap: 5px; /* 間隔を最小限に */
   }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 0.8; transform: translateY(0); }
 }
 
 .header-title-text {
