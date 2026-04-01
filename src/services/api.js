@@ -7,6 +7,23 @@
 const GAS_WEBAPP_URL = '/api/proxy';
 
 /**
+ * GoogleドライブのURLを埋め込みに適したサムネイル形式に変換
+ */
+const convertToThumbnailUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  if (!url.includes('drive.google.com') && !url.includes('googleusercontent.com')) return url;
+
+  // 各種形式からIDを抽出 (uc?id=, d/ID, /open?id= 等)
+  const idMatch = url.match(/[-\w]{25,}/);
+  if (idMatch) {
+    const fileId = idMatch[0];
+    // 埋め込みに最も安定しているサムネイル生成URLに変換 (サイズ1000px指定)
+    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+  }
+  return url;
+};
+
+/**
  * メンバー一覧を取得
  */
 export const fetchMembers = async () => {
@@ -15,7 +32,7 @@ export const fetchMembers = async () => {
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
 
-    // データの正規化: どんな項目名(Images, image, images等)でも画像を見つけ出す強化版
+    // データの正規化: どんな項目名(Images, image, images等)でも画像を見つけ出す & URL変換
     return data.map(m => {
       // 全てのキーを小文字に正規化したクローンを作成
       const norm = {};
@@ -32,10 +49,13 @@ export const fetchMembers = async () => {
         finalImages = imagesRaw.split(',').map(s => s.trim()).filter(Boolean);
       }
 
+      // すべての画像を安定した形式に変換
+      const updatedImages = finalImages.map(img => convertToThumbnailUrl(img));
+
       return {
         ...m,
         id: String(norm.id || m.id),
-        images: finalImages
+        images: updatedImages
       };
     });
   } catch (error) {
