@@ -15,21 +15,26 @@ export const fetchMembers = async () => {
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
 
-    // データの正規化: images または image から画像を配列として取得する
+    // データの正規化: どんな項目名(Images, image, images等)でも画像を見つけ出す強化版
     return data.map(m => {
+      // 全てのキーを小文字に正規化したクローンを作成
+      const norm = {};
+      Object.keys(m).forEach(k => {
+        norm[k.toLowerCase().trim()] = m[k];
+      });
+
       let finalImages = [];
-      if (Array.isArray(m.images)) {
-        finalImages = m.images;
-      } else if (typeof m.images === 'string' && m.images.trim()) {
-        finalImages = m.images.split(',').filter(Boolean);
-      } else if (m.image) {
-        // 古い単数形の項目があれば採用
-        finalImages = [m.image];
+      const imagesRaw = norm.images || norm.image;
+
+      if (Array.isArray(imagesRaw)) {
+        finalImages = imagesRaw;
+      } else if (typeof imagesRaw === 'string' && imagesRaw.trim()) {
+        finalImages = imagesRaw.split(',').map(s => s.trim()).filter(Boolean);
       }
 
       return {
         ...m,
-        id: String(m.id),
+        id: String(norm.id || m.id),
         images: finalImages
       };
     });
