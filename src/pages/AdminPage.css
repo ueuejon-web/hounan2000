@@ -61,6 +61,19 @@
   object-fit: cover;
 }
 
+.admin-thumb-placeholder {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  color: #aaa;
+  border: 1px solid #eee;
+}
+
 .admin-name {
   font-weight: bold;
   color: var(--color-main);

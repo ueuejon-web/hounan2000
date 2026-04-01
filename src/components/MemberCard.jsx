@@ -9,7 +9,13 @@ const MemberCard = ({ member }) => {
   return (
     <Link to={`/member/${member.id}`} className="member-card">
       <div className="card-image-wrap">
-        {thumbnail && <img src={thumbnail} alt={member.name} className="card-image" />}
+        {thumbnail ? (
+          <img src={thumbnail} alt={member.name} className="card-image" />
+        ) : (
+          <div className="card-image-placeholder">
+            <span className="rose-icon">🌹</span>
+          </div>
+        )}
       </div>
       <div className="card-content">
         <h3 className="card-name">{member.name}</h3>

@@ -15,14 +15,24 @@ export const fetchMembers = async () => {
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
 
-    // データの正規化: images が文字列で来た場合に配列に変換する
-    return data.map(m => ({
-      ...m,
-      id: String(m.id), // IDを文字列として確実に扱う
-      images: Array.isArray(m.images)
-        ? m.images
-        : (typeof m.images === 'string' ? m.images.split(',').filter(Boolean) : [])
-    }));
+    // データの正規化: images または image から画像を配列として取得する
+    return data.map(m => {
+      let finalImages = [];
+      if (Array.isArray(m.images)) {
+        finalImages = m.images;
+      } else if (typeof m.images === 'string' && m.images.trim()) {
+        finalImages = m.images.split(',').filter(Boolean);
+      } else if (m.image) {
+        // 古い単数形の項目があれば採用
+        finalImages = [m.image];
+      }
+
+      return {
+        ...m,
+        id: String(m.id),
+        images: finalImages
+      };
+    });
   } catch (error) {
     console.error('Fetch members error:', error);
     return [];
