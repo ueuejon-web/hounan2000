@@ -132,7 +132,7 @@ function uploadToDrive(base64Data, itemName) {
     const blob = Utilities.newBlob(bytes, contentType, itemName + "_" + Date.now());
     const file = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    return "https://drive.google.com/uc?export=view&id=" + file.getId();
+    return "https://lh3.googleusercontent.com/d/" + file.getId();
   } catch (e) {
     logError('uploadToDrive', e);
     return null;

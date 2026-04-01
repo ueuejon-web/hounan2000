@@ -42,8 +42,46 @@ const AdminEditPage = ({ members = [], onSave }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // 画像をリサイズするヘルパー関数
+  const resizeImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxSide = 1200; // 最大長辺
+
+          if (width > height) {
+            if (width > maxSide) {
+              height *= maxSide / width;
+              width = maxSide;
+            }
+          } else {
+            if (height > maxSide) {
+              width *= maxSide / height;
+              height = maxSide;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // 80%の画質でJPEGとして出力して軽量化
+          resolve(canvas.toDataURL('image/jpeg', 0.8));
+        };
+      };
+    });
+  };
+
   // ファイルアップロード処理
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
     
     // 最大3枚制限
@@ -52,16 +90,12 @@ const AdminEditPage = ({ members = [], onSave }) => {
       return;
     }
 
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({
-          ...prev,
-          images: [...prev.images, reader.result]
-        }));
-      };
-      reader.readAsDataURL(file);
-    });
+    const resizedImages = await Promise.all(files.map(file => resizeImage(file)));
+    
+    setFormData(prev => ({
+      ...prev,
+      images: [...prev.images, ...resizedImages]
+    }));
   };
 
   // 画像削除
