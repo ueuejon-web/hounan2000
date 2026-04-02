@@ -80,3 +80,25 @@
   color: var(--color-text);
   line-height: 1.5;
 }
+
+@media (max-width: 480px) {
+  .member-card {
+    padding: 16px;
+    gap: 16px;
+  }
+  
+  .card-image-wrap {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .card-name {
+    font-size: 1.15rem; /* スマホでは名前を小さく */
+  }
+  
+  .card-job {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+}
+
