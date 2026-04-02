@@ -8,4 +8,17 @@
   font-weight: bold;
   font-size: 1.15rem;
   letter-spacing: 0.5px;
+  line-height: 1.6;
 }
+
+.concept-line {
+  display: block;
+}
+
+@media screen and (max-width: 480px) {
+  .concept-text {
+    font-size: 1.0rem;
+    padding: 0 10px;
+  }
+}
+
