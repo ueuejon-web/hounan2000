@@ -13,12 +13,20 @@
 
 .concept-line {
   display: block;
+  white-space: nowrap;
 }
 
 @media screen and (max-width: 480px) {
   .concept-text {
-    font-size: 1.0rem;
-    padding: 0 10px;
+    font-size: 0.9rem;
+    padding: 0 5px;
   }
 }
+
+@media screen and (max-width: 375px) {
+  .concept-text {
+    font-size: 0.85rem;
+  }
+}
+
 
