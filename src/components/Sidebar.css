@@ -23,13 +23,13 @@
 @media (max-width: 768px) {
   .category-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 2列から3列に変更 */
-    gap: 8px;
+    grid-template-columns: repeat(2, 1fr); /* 2列に戻す */
+    gap: 10px;
   }
   
   .category-btn {
-    padding: 8px 4px; /* 3列に収まるようさらに小さく */
-    font-size: 0.85rem;
+    padding: 10px 8px;
+    font-size: 0.95rem;
   }
 }
 
