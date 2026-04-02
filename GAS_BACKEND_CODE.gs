@@ -13,8 +13,12 @@ function doGet(e) {
     const action = e.parameter.action;
     const sheet = getTargetSheet();
     
-    if (action === 'save' || action === 'delete') {
+    if (action === 'save' || action === 'delete' || action === 'increment_member_view' || action === 'increment_site_view') {
       return handlePostRequest(e.parameter);
+    }
+    
+    if (action === 'get_stats') {
+      return fetchStats();
     }
     
     // データ取得
@@ -54,6 +58,10 @@ function handlePostRequest(params) {
     return handleSave(params.data, sheet);
   } else if (action === 'delete') {
     return handleDelete(params.id, sheet);
+  } else if (action === 'increment_member_view') {
+    return incrementMemberView(params.id, sheet);
+  } else if (action === 'increment_site_view') {
+    return incrementSiteView();
   }
   return createJsonResponse({ status: 'error', message: 'Invalid action' });
 }
@@ -110,6 +118,54 @@ function handleDelete(id, sheet) {
     }
   }
   return createJsonResponse({ status: 'success' });
+}
+
+function incrementMemberView(id, sheet) {
+  try {
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0];
+    const viewCountIdx = headers.indexOf('view_count');
+    if (viewCountIdx === -1) return createJsonResponse({ status: 'error', message: 'view_count column not found' });
+
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]) === String(id)) {
+        const currentCount = Number(data[i][viewCountIdx]) || 0;
+        sheet.getRange(i + 1, viewCountIdx + 1).setValue(currentCount + 1);
+        return createJsonResponse({ status: 'success', newCount: currentCount + 1 });
+      }
+    }
+    return createJsonResponse({ status: 'error', message: 'Member not found' });
+  } catch (e) {
+    return createJsonResponse({ status: 'error', message: e.toString() });
+  }
+}
+
+function incrementSiteView() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let statsSheet = ss.getSheetByName('統計');
+    if (!statsSheet) {
+      statsSheet = ss.insertSheet('統計');
+      statsSheet.appendRow(['total_views']);
+      statsSheet.appendRow([0]);
+    }
+    const currentCount = Number(statsSheet.getRange(2, 1).getValue()) || 0;
+    statsSheet.getRange(2, 1).setValue(currentCount + 1);
+    return createJsonResponse({ status: 'success', total_views: currentCount + 1 });
+  } catch (e) {
+    return createJsonResponse({ status: 'error', message: e.toString() });
+  }
+}
+
+function fetchStats() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let statsSheet = ss.getSheetByName('統計');
+    const totalViews = statsSheet ? (Number(statsSheet.getRange(2, 1).getValue()) || 0) : 0;
+    return createJsonResponse({ total_views: totalViews });
+  } catch (e) {
+    return createJsonResponse({ status: 'error', message: e.toString() });
+  }
 }
 
 function createJsonResponse(data) {

@@ -1,11 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { incrementMemberView } from '../services/api';
 import Header from '../components/Header';
 import './DetailPage.css';
 
 const DetailPage = ({ members = [] }) => {
   const { id } = useParams();
   const member = members.find(m => String(m.id) === String(id));
+
+  // メンバーの閲覧数をインクリメント (セッションにフラグがない場合のみ)
+  useEffect(() => {
+    if (member && id) {
+      const sessionKey = `has_viewed_member_${id}`;
+      const hasViewed = sessionStorage.getItem(sessionKey);
+      if (!hasViewed) {
+        incrementMemberView(id);
+        sessionStorage.setItem(sessionKey, 'true');
+      }
+    }
+  }, [id, member]);
 
   if (!member) {
     return (
@@ -74,7 +87,15 @@ const DetailPage = ({ members = [] }) => {
               />
             )}
             <div className="detail-title">
-              <h2>{member.name}</h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <h2>{member.name}</h2>
+                {member.view_count !== undefined && (
+                  <span className="detail-view-count">
+                    <span style={{ fontSize: '1.2rem', marginRight: '4px' }}>👁️</span>
+                    {Number(member.view_count).toLocaleString()}
+                  </span>
+                )}
+              </div>
               <p className="detail-job">{member.job}</p>
               {member.company && <p className="detail-company">{member.company}</p>}
             </div>

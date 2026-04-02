@@ -116,3 +116,49 @@ export const deleteMemberFromDB = async (id) => {
     throw error;
   }
 };
+
+/**
+ * メンバーの閲覧数をインクリメント
+ */
+export const incrementMemberView = async (id) => {
+  try {
+    const response = await fetch(GAS_WEBAPP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'increment_member_view', id: id })
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Increment member view error:', error);
+  }
+};
+
+/**
+ * サイト全体の閲覧数をインクリメント
+ */
+export const incrementSiteView = async () => {
+  try {
+    const response = await fetch(GAS_WEBAPP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'increment_site_view' })
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Increment site view error:', error);
+  }
+};
+
+/**
+ * 統計情報（サイト全体の閲覧数など）を取得
+ */
+export const fetchSiteStats = async () => {
+  try {
+    const response = await fetch(`${GAS_WEBAPP_URL}?action=get_stats`);
+    if (!response.ok) throw new Error('Network response was not ok');
+    return await response.json();
+  } catch (error) {
+    console.error('Fetch stats error:', error);
+    return { total_views: 0 };
+  }
+};
