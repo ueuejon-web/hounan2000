@@ -47,8 +47,8 @@
     padding: 15px 0;
   }
   .site-logo {
-    max-width: 320px; /* 横幅を拡大 */
-    width: 90%;
+    max-width: 384px; /* 320pxから1.2倍に変更 */
+    width: 95%; /* 90%から少し拡大 */
   }
   .header-deco {
     width: 50px; /* 薔薇を少し小さくしてロゴのスペースを確保 */
