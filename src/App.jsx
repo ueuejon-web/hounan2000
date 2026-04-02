@@ -5,45 +5,24 @@ import DetailPage from './pages/DetailPage';
 import AdminPage from './pages/AdminPage';
 import AdminEditPage from './pages/AdminEditPage';
 import AdminIntroPage from './pages/AdminIntroPage';
-import { fetchMembers, saveMember, deleteMemberFromDB, incrementSiteView, fetchSiteStats } from './services/api.js';
+import { fetchMembers, saveMember, deleteMemberFromDB } from './services/api.js';
 import './App.css';
 import ScrollToTop from './components/ScrollToTop';
-import Footer from './components/Footer';
 import { Link } from 'react-router-dom';
 
 function App() {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [totalViews, setTotalViews] = useState(0);
 
   // 起動時にGASからデータを取得
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      const [membersData, statsData] = await Promise.all([
-        fetchMembers(),
-        fetchSiteStats()
-      ]);
-      setMembers(membersData);
-      if (statsData) setTotalViews(statsData.total_views);
+      const data = await fetchMembers();
+      setMembers(data);
       setLoading(false);
     };
     loadData();
-
-    // サイト閲覧数をインクリメント (セッションにフラグがない場合のみ)
-    const incrementSessionView = async () => {
-      const hasVisited = sessionStorage.getItem('has_visited_hounan2000');
-      if (!hasVisited) {
-        const result = await incrementSiteView();
-        if (result && result.status === 'success') {
-          sessionStorage.setItem('has_visited_hounan2000', 'true');
-          // 最新の統計を再取得
-          const updatedStats = await fetchSiteStats();
-          if (updatedStats) setTotalViews(updatedStats.total_views);
-        }
-      }
-    };
-    incrementSessionView();
   }, []);
 
   const addMember = async (newMember) => {
@@ -106,8 +85,6 @@ function App() {
           />
           <Route path="/about-admin" element={<AdminIntroPage />} />
         </Routes>
-
-        <Footer totalViews={totalViews} />
 
         {/* 右下のフローティングロゴ */}
         <Link 

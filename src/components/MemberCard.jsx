@@ -23,15 +23,7 @@ const MemberCard = ({ member }) => {
         )}
       </div>
       <div className="card-content">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 className="card-name">{member.name}</h3>
-          {member.view_count !== undefined && (
-            <span className="card-view-count">
-              <span style={{ fontSize: '0.9rem', marginRight: '2px' }}>👁️</span>
-              {Number(member.view_count).toLocaleString()}
-            </span>
-          )}
-        </div>
+        <h3 className="card-name">{member.name}</h3>
         <p className="card-job">{member.job}</p>
         <hr className="card-divider" />
         <p className="card-desc">{member.short_desc}</p>
