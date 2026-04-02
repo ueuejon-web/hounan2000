@@ -7,6 +7,7 @@ import AdminEditPage from './pages/AdminEditPage';
 import AdminIntroPage from './pages/AdminIntroPage';
 import { fetchMembers, saveMember, deleteMemberFromDB } from './services/api.js';
 import './App.css';
+import ScrollToTop from './components/ScrollToTop';
 import { Link } from 'react-router-dom';
 
 function App() {
@@ -65,6 +66,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="app-container">
         <Routes>
           <Route path="/" element={loading ? <div className="loading">読み込み中...</div> : <HomePage members={members} />} />

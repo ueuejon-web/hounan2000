@@ -55,13 +55,24 @@ const DetailPage = ({ members = [] }) => {
       <main className="main-content container">
         <div className="detail-card">
           <div className="detail-header">
-            {/* メイン画像（配列の1枚目） */}
-            <img 
-              src={member.images && member.images.length > 0 ? member.images[0] : ""} 
-              alt={member.name} 
-              className="detail-image" 
-              referrerPolicy="no-referrer"
-            />
+            {/* メイン画像 */}
+            {member.images && member.images.length > 0 ? (
+              <a href={member.images[0]} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block' }}>
+                <img 
+                  src={member.images[0]} 
+                  alt={member.name} 
+                  className="detail-image" 
+                  referrerPolicy="no-referrer"
+                />
+              </a>
+            ) : (
+              <img 
+                src="" /* 画像がない場合のプレースホルダー等 */
+                alt={member.name} 
+                className="detail-image" 
+                referrerPolicy="no-referrer"
+              />
+            )}
             <div className="detail-title">
               <h2>{member.name}</h2>
               <p className="detail-job">{member.job}</p>
@@ -97,7 +108,20 @@ const DetailPage = ({ members = [] }) => {
             
             <div className="detail-section">
               <h3>連絡先</h3>
-              <p className="detail-text"><a href={`mailto:${member.contact}`}>{member.contact}</a></p>
+              {member.contact && (member.contact.includes('line.me') || member.contact.includes('lin.ee')) ? (
+                <div style={{ marginTop: '16px' }}>
+                  <a 
+                    href={member.contact} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="line-link-button"
+                  >
+                    LINEで連絡する
+                  </a>
+                </div>
+              ) : (
+                <p className="detail-text"><a href={member.contact && member.contact.includes('@') ? `mailto:${member.contact}` : member.contact} target="_blank" rel="noopener noreferrer">{member.contact}</a></p>
+              )}
             </div>
             
             {member.sns_link && (

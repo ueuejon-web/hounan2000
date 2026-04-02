@@ -20,7 +20,7 @@ const HomePage = ({ members = [] }) => {
       const matchCategory = category === '全て' || member.category === category;
       
       return matchKeyword && matchCategory;
-    });
+    }).reverse();
   }, [keyword, category, members]);
 
   return (
