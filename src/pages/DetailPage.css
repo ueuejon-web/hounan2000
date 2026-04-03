@@ -123,9 +123,26 @@
   .detail-header {
     flex-direction: column;
     text-align: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .detail-title h2 {
+    font-size: 1.5rem;
   }
   .image-gallery {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail-card {
+    padding: 20px;
+  }
+  .detail-title h2 {
+    font-size: 1.3rem;
+  }
+  .detail-job {
+    font-size: 1rem;
   }
 }
 

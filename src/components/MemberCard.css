@@ -93,7 +93,7 @@
   }
   
   .card-name {
-    font-size: 1.15rem; /* スマホでは名前を小さく */
+    font-size: 1.05rem; /* スマホでは名前をさらに少し小さく */
   }
   
   .card-job {
