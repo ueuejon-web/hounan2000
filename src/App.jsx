@@ -20,27 +20,24 @@ function App() {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      console.log('[App] Starting data fetch...');
       
       try {
         // メンバー一覧の取得を優先（これがメイン機能のため）
         const membersData = await fetchMembers();
-        console.log('[App] Members fetched:', membersData?.length || 0);
         setMembers(membersData || []);
 
         // 設定の取得（失敗してもメンバー一覧には影響させない）
         try {
           const settingsData = await fetchSettings();
-          console.log('[App] Settings fetched:', settingsData);
           if (settingsData && settingsData.status !== 'error') {
             setSettings(prev => ({ ...prev, ...settingsData }));
           }
         } catch (settingsError) {
-          console.error('[App] Settings fetch failed but continuing:', settingsError);
+          console.error('Settings fetch error:', settingsError);
         }
 
       } catch (error) {
-        console.error('[App] Critical fetch error:', error);
+        console.error('Critical data fetch error:', error);
       } finally {
         setLoading(false);
       }
@@ -55,7 +52,7 @@ function App() {
           }
         }
       } catch (viewError) {
-        console.error('[App] View count increment failed:', viewError);
+        console.error('View count increment failed:', viewError);
       }
     };
     loadData();
