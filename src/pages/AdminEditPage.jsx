@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import './AdminEditPage.css';
 
-const categories = ['IT', '車・バイク', '医療', '教育', '飲食', '遊び', '美容', '建築', 'その他'];
+const categories = ['IT', '車・バイク', '医療', '教育・習い事', '飲食', '遊び', '美容・健康', '建築・お庭', 'その他'];
 
 const AdminEditPage = ({ members = [], onSave }) => {
   const { id } = useParams();
@@ -28,8 +28,15 @@ const AdminEditPage = ({ members = [], onSave }) => {
     if (isEdit && members.length > 0) {
       const member = members.find(m => String(m.id) === String(id));
       if (member) {
+        // カテゴリー名の互換性対応
+        let category = member.category;
+        if (category === '美容') category = '美容・健康';
+        if (category === '建築') category = '建築・お庭';
+        if (category === '教育') category = '教育・習い事';
+
         setFormData({
           ...member,
+          category,
           images: member.images || (member.image ? [member.image] : []),
           map_url: member.map_url || ''
         });

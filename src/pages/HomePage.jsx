@@ -17,7 +17,10 @@ const HomePage = ({ members = [] }) => {
       const matchKeyword = keyword === '' || content.includes(keyword.toLowerCase());
       
       // category matching
-      const matchCategory = category === '全て' || member.category === category;
+      const matchCategory = category === '全て' || member.category === category ||
+        (category === '美容・健康' && member.category === '美容') ||
+        (category === '建築・お庭' && member.category === '建築') ||
+        (category === '教育・習い事' && member.category === '教育');
       
       return matchKeyword && matchCategory;
     }).reverse();
