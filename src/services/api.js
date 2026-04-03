@@ -139,7 +139,7 @@ export const fetchSettings = async () => {
       data = settingsObj;
     }
 
-    console.log('[API] Settings processed:', data);
+    console.log('[API] Settings processed (String):', JSON.stringify(data));
     return data;
   } catch (error) {
     console.error('[API] Fetch settings error:', error);
