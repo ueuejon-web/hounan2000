@@ -1,8 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { incrementViewCount } from '../services/api';
 import './AdminIntroPage.css';
 
-const AdminIntroPage = () => {
+const AdminIntroPage = ({ settings, onRefresh }) => {
   const navigate = useNavigate();
   const [clickCount, setClickCount] = useState(0);
   const clickTimeoutRef = useRef(null);
@@ -25,6 +26,20 @@ const AdminIntroPage = () => {
     }
   };
 
+  // ページ表示時に閲覧数をカウントアップ
+  useEffect(() => {
+    const trackView = async () => {
+      if (!sessionStorage.getItem('admin_intro_viewed')) {
+        const result = await incrementViewCount('adminIntroViews');
+        if (result && result.status === 'success') {
+          sessionStorage.setItem('admin_intro_viewed', 'true');
+          if (onRefresh) onRefresh(); // 親コンポーネントの状態を更新
+        }
+      }
+    };
+    trackView();
+  }, [onRefresh]);
+
   return (
     <div className="admin-intro-container">
       <div className="admin-intro-content">
@@ -37,16 +52,15 @@ const AdminIntroPage = () => {
         </div>
         
         <div className="admin-intro-text">
-          <p>
-            こんな所まで見て頂きありがとうございます。架空のクリエイティブスタジオ「上ブ.デザイン」代表の上田です。はい、こんな会社実在しません(笑)趣味というか興味が湧くとやりたくなってしまうタチで、LINE公式アカウントだけでは飽き足らずこんなサイトまで作ってしまいました。なので機能しなくても目的は達成したと言えます。
-          </p>
-          <p>
-            とは言え「どうせお金落とすなら同級生に落とした方がいいじゃん」とは本気で思ってるので、機能してくれたら良いなと思います。
-          </p>
-          <p>
-            「ホームページ作りたい！」とか「公式アカウント作りたい！」とか要望あればご連絡ください。
-            有料でならやりますので(笑)
-          </p>
+          {settings.adminIntroText ? (
+            settings.adminIntroText.split('\n').map((line, i) => (
+              <p key={i}>{line || '\u00A0'}</p>
+            ))
+          ) : (
+            <>
+              <p>読み込み中...</p>
+            </>
+          )}
         </div>
 
         <div className="admin-intro-links">

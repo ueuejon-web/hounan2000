@@ -116,3 +116,58 @@ export const deleteMemberFromDB = async (id) => {
     throw error;
   }
 };
+
+/**
+ * 設定情報の取得 (紹介文、表示カウントなど)
+ */
+export const fetchSettings = async () => {
+  try {
+    const response = await fetch(`${GAS_WEBAPP_URL}?type=settings`);
+    if (!response.ok) throw new Error('Settings fetch failed');
+    return await response.json();
+  } catch (error) {
+    console.error('Fetch settings error:', error);
+    return null;
+  }
+};
+
+/**
+ * 設定値の更新 (主に紹介文用)
+ */
+export const updateSettings = async (key, value) => {
+  try {
+    const response = await fetch(GAS_WEBAPP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'updateSetting',
+        key,
+        value
+      }),
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Update setting error:', error);
+    throw error;
+  }
+};
+
+/**
+ * 閲覧数のカウントアップ
+ */
+export const incrementViewCount = async (key) => {
+  try {
+    const response = await fetch(GAS_WEBAPP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'incrementView',
+        key
+      }),
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Increment view error:', error);
+    return null; // カウントアップ失敗は致命的でないため
+  }
+};

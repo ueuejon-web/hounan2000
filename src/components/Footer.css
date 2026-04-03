@@ -1,0 +1,70 @@
+.site-footer {
+  background: white;
+  padding: 2.5rem 0 1.5rem;
+  margin-top: 4rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.footer-views {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: #fdf2f2; /* 薄いバラ色 */
+  padding: 0.6rem 1.5rem;
+  border-radius: 50px;
+  border: 1px solid rgba(220, 53, 69, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.view-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.view-label {
+  font-weight: 500;
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.view-count {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 700;
+  color: #dc3545; /* テーマカラーの赤 */
+  letter-spacing: 0.05em;
+}
+
+.view-divider {
+  color: rgba(220, 53, 69, 0.2);
+  font-weight: 200;
+}
+
+.footer-copy {
+  color: #999;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+}
+
+/* モバイル対応 */
+@media (max-width: 600px) {
+  .footer-views {
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1rem 1.5rem;
+    border-radius: 20px;
+  }
+  
+  .view-divider {
+    display: none;
+  }
+}

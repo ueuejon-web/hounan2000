@@ -5,25 +5,66 @@ import DetailPage from './pages/DetailPage';
 import AdminPage from './pages/AdminPage';
 import AdminEditPage from './pages/AdminEditPage';
 import AdminIntroPage from './pages/AdminIntroPage';
-import { fetchMembers, saveMember, deleteMemberFromDB } from './services/api.js';
+import { fetchMembers, saveMember, deleteMemberFromDB, fetchSettings, incrementViewCount, updateSettings } from './services/api.js';
 import './App.css';
 import ScrollToTop from './components/ScrollToTop';
+import Footer from './components/Footer';
 import { Link } from 'react-router-dom';
 
 function App() {
   const [members, setMembers] = useState([]);
+  const [settings, setSettings] = useState({ adminIntroText: '', siteTotalViews: 0, adminIntroViews: 0 });
   const [loading, setLoading] = useState(true);
 
   // 起動時にGASからデータを取得
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      const data = await fetchMembers();
-      setMembers(data);
+      
+      // 並列でメンバーと設定を取得
+      const [membersData, settingsData] = await Promise.all([
+        fetchMembers(),
+        fetchSettings()
+      ]);
+      
+      setMembers(membersData);
+      if (settingsData) {
+        setSettings(settingsData);
+      }
       setLoading(false);
+      
+      // サイト全体の閲覧数カウントアップ (セッションで1回のみ)
+      if (!sessionStorage.getItem('site_viewed')) {
+        const result = await incrementViewCount('siteTotalViews');
+        if (result && result.status === 'success') {
+          sessionStorage.setItem('site_viewed', 'true');
+          // 最新のカウントを反映
+          setSettings(prev => ({ ...prev, siteTotalViews: result.newValue }));
+        }
+      }
     };
     loadData();
   }, []);
+
+  const updateIntroText = async (newText) => {
+    try {
+      const result = await updateSettings('adminIntroText', newText);
+      if (result.status === 'success') {
+        setSettings(prev => ({ ...prev, adminIntroText: newText }));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Update intro text error:', error);
+      return false;
+    }
+  };
+
+  // 閲覧数を手動で更新するための関数（紹介ページ用）
+  const refreshSettings = async () => {
+    const data = await fetchSettings();
+    if (data) setSettings(data);
+  };
 
   const addMember = async (newMember) => {
     try {
@@ -73,7 +114,7 @@ function App() {
           <Route path="/member/:id" element={<DetailPage members={members} />} />
           <Route 
             path="/admin" 
-            element={<AdminPage members={members} onDelete={deleteMember} />} 
+            element={<AdminPage members={members} settings={settings} onDelete={deleteMember} onUpdateIntro={updateIntroText} />} 
           />
           <Route 
             path="/admin/new" 
@@ -83,8 +124,11 @@ function App() {
             path="/admin/edit/:id" 
             element={<AdminEditPage members={members} onSave={updateMember} />} 
           />
-          <Route path="/about-admin" element={<AdminIntroPage />} />
+          <Route path="/about-admin" element={<AdminIntroPage settings={settings} onRefresh={refreshSettings} />} />
         </Routes>
+
+        {/* フッター（閲覧数表示） */}
+        <Footer siteViews={settings.siteTotalViews} adminViews={settings.adminIntroViews} />
 
         {/* 右下のフローティングロゴ */}
         <Link 
