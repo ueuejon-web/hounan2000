@@ -20,28 +20,42 @@ function App() {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
+      console.log('[App] Starting data fetch...');
       
-      // 並列でメンバーと設定を取得
-      const [membersData, settingsData] = await Promise.all([
-        fetchMembers(),
-        fetchSettings()
-      ]);
-      
-      setMembers(membersData);
-      console.log('[App] settingsData received:', settingsData);
-      if (settingsData) {
-        setSettings(settingsData);
+      try {
+        // メンバー一覧の取得を優先（これがメイン機能のため）
+        const membersData = await fetchMembers();
+        console.log('[App] Members fetched:', membersData?.length || 0);
+        setMembers(membersData || []);
+
+        // 設定の取得（失敗してもメンバー一覧には影響させない）
+        try {
+          const settingsData = await fetchSettings();
+          console.log('[App] Settings fetched:', settingsData);
+          if (settingsData && settingsData.status !== 'error') {
+            setSettings(prev => ({ ...prev, ...settingsData }));
+          }
+        } catch (settingsError) {
+          console.error('[App] Settings fetch failed but continuing:', settingsError);
+        }
+
+      } catch (error) {
+        console.error('[App] Critical fetch error:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
       
       // サイト全体の閲覧数カウントアップ (セッションで1回のみ)
-      if (!sessionStorage.getItem('site_viewed')) {
-        const result = await incrementViewCount('siteTotalViews');
-        if (result && result.status === 'success') {
-          sessionStorage.setItem('site_viewed', 'true');
-          // 最新のカウントを反映
-          setSettings(prev => ({ ...prev, siteTotalViews: result.newValue }));
+      try {
+        if (!sessionStorage.getItem('site_viewed')) {
+          const result = await incrementViewCount('siteTotalViews');
+          if (result && result.status === 'success') {
+            sessionStorage.setItem('site_viewed', 'true');
+            setSettings(prev => ({ ...prev, siteTotalViews: result.newValue }));
+          }
         }
+      } catch (viewError) {
+        console.error('[App] View count increment failed:', viewError);
       }
     };
     loadData();
