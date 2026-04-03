@@ -36,7 +36,42 @@ const AdminPage = ({ members, settings, onDelete, onUpdateIntro }) => {
         </div>
 
         <div className="admin-table-container">
-          {/* ...テーブル表示 (既存) ... */}
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>画像</th>
+                <th>名前</th>
+                <th>職種</th>
+                <th>カテゴリ</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {members.map(member => (
+                <tr key={member.id}>
+                  <td>
+                    {member.images && member.images.length > 0 ? (
+                      <img 
+                        src={member.images[0]} 
+                        alt="" 
+                        className="admin-thumb" 
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="admin-thumb-placeholder">No Image</div>
+                    )}
+                  </td>
+                  <td className="admin-name">{member.name}</td>
+                  <td>{member.job}</td>
+                  <td>{member.category}</td>
+                  <td className="admin-btns">
+                    <Link to={`/admin/edit/${member.id}`} className="admin-edit-link">編集</Link>
+                    <button onClick={() => onDelete(member.id)} className="admin-delete-btn">削除</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
         {/* サイト設定セクション */}
