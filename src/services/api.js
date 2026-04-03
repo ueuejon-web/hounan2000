@@ -32,7 +32,12 @@ export const fetchMembers = async () => {
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
 
-    // データの正規化: どんな項目名(Images, image, images等)でも画像を見つけ出す & URL変換
+    // データの正規化: 配列でない場合は空配列を返す（クラッシュ防止）
+    if (!Array.isArray(data)) {
+      console.warn('[API] fetchMembers expected array but got:', data);
+      return [];
+    }
+
     return data.map(m => {
       // 全てのキーを小文字に正規化したクローンを作成
       const norm = {};
@@ -132,10 +137,17 @@ export const fetchSettings = async () => {
     if (!response.ok) throw new Error(`Settings fetch failed: ${response.status}`);
     const data = await response.json();
     console.log('[API] Settings data received:', data);
-    return data;
+    
+    // エラーが返ってきた場合は空のオブジェクトを返す
+    if (data && (data.status === 'error' || data.status === 'non-json')) {
+      console.error('[API] Settings error received:', data.message);
+      return {};
+    }
+    
+    return data || {};
   } catch (error) {
     console.error('[API] Fetch settings error:', error);
-    return null;
+    return {}; // nullではなく空オブジェクトを返して安全にする
   }
 };
 
