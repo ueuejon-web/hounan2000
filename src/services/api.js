@@ -122,24 +122,16 @@ export const deleteMemberFromDB = async (id) => {
  */
 export const fetchSettings = async () => {
   try {
-    console.log('[API] Fetching settings from:', `${GAS_WEBAPP_URL}?type=settings`);
-    const response = await fetch(`${GAS_WEBAPP_URL}?type=settings`);
-    let data = await response.json();
-    console.log('[API] Settings RAW data received:', data);
-
-    // 配列（スプレッドシートの生データ形式）で届いた場合の変換処理
-    if (Array.isArray(data)) {
-      console.log('[API] Converting Array to Object...');
-      const settingsObj = {};
-      data.forEach(row => {
-        if (row && row[0] && row[0] !== 'key') {
-          settingsObj[row[0]] = row[1];
-        }
-      });
-      data = settingsObj;
-    }
-
-    console.log('[API] Settings processed (String):', JSON.stringify(data));
+    console.log('[API] Fetching settings via POST (action: getSettings)');
+    const response = await fetch(GAS_WEBAPP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'getSettings' }),
+    });
+    
+    if (!response.ok) throw new Error(`Settings fetch failed: ${response.status}`);
+    const data = await response.json();
+    console.log('[API] Settings data received:', data);
     return data;
   } catch (error) {
     console.error('[API] Fetch settings error:', error);
