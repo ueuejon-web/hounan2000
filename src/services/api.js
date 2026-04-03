@@ -122,11 +122,14 @@ export const deleteMemberFromDB = async (id) => {
  */
 export const fetchSettings = async () => {
   try {
+    console.log('[API] Fetching settings from:', `${GAS_WEBAPP_URL}?type=settings`);
     const response = await fetch(`${GAS_WEBAPP_URL}?type=settings`);
-    if (!response.ok) throw new Error('Settings fetch failed');
-    return await response.json();
+    if (!response.ok) throw new Error(`Settings fetch failed: ${response.status}`);
+    const data = await response.json();
+    console.log('[API] Settings RAW data received:', data);
+    return data;
   } catch (error) {
-    console.error('Fetch settings error:', error);
+    console.error('[API] Fetch settings error:', error);
     return null;
   }
 };

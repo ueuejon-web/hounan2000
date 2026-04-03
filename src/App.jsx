@@ -9,7 +9,7 @@ import { fetchMembers, saveMember, deleteMemberFromDB, fetchSettings, incrementV
 import './App.css';
 import ScrollToTop from './components/ScrollToTop';
 import Footer from './components/Footer';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 function App() {
   const [members, setMembers] = useState([]);
@@ -28,6 +28,7 @@ function App() {
       ]);
       
       setMembers(membersData);
+      console.log('[App] settingsData received:', settingsData);
       if (settingsData) {
         setSettings(settingsData);
       }
@@ -108,37 +109,62 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <div className="app-container">
-        <Routes>
-          <Route path="/" element={loading ? <div className="loading">読み込み中...</div> : <HomePage members={members} />} />
-          <Route path="/member/:id" element={<DetailPage members={members} />} />
-          <Route 
-            path="/admin" 
-            element={<AdminPage members={members} settings={settings} onDelete={deleteMember} onUpdateIntro={updateIntroText} />} 
-          />
-          <Route 
-            path="/admin/new" 
-            element={<AdminEditPage onSave={addMember} />} 
-          />
-          <Route 
-            path="/admin/edit/:id" 
-            element={<AdminEditPage members={members} onSave={updateMember} />} 
-          />
-          <Route path="/about-admin" element={<AdminIntroPage settings={settings} onRefresh={refreshSettings} />} />
-        </Routes>
-
-        {/* フッター（閲覧数表示） */}
-        <Footer siteViews={settings.siteTotalViews} adminViews={settings.adminIntroViews} />
-
-        {/* 右下のフローティングロゴ */}
-        <Link 
-          to="/about-admin" 
-          className="floating-footer-logo"
-        >
-          <img src="/footer-logo.png" alt="Creative Studio" />
-        </Link>
-      </div>
+      <AppContent 
+        members={members} 
+        settings={settings} 
+        loading={loading}
+        onDelete={deleteMember}
+        onSaveNew={addMember}
+        onSaveEdit={updateMember}
+        onUpdateIntro={updateIntroText}
+        onRefreshSettings={refreshSettings}
+      />
     </Router>
+  );
+}
+
+// サブコンポーネント：Routerの内側で useLocation を使うため
+function AppContent({ 
+  members, settings, loading, onDelete, onSaveNew, onSaveEdit, onUpdateIntro, onRefreshSettings 
+}) {
+  const location = useLocation();
+  const isAdminIntroPage = location.pathname === '/about-admin';
+
+  return (
+    <div className="app-container">
+      <Routes>
+        <Route path="/" element={loading ? <div className="loading">読み込み中...</div> : <HomePage members={members} />} />
+        <Route path="/member/:id" element={<DetailPage members={members} />} />
+        <Route 
+          path="/admin" 
+          element={<AdminPage members={members} settings={settings} onDelete={onDelete} onUpdateIntro={onUpdateIntro} />} 
+        />
+        <Route 
+          path="/admin/new" 
+          element={<AdminEditPage onSave={onSaveNew} />} 
+        />
+        <Route 
+          path="/admin/edit/:id" 
+          element={<AdminEditPage members={members} onSave={onSaveEdit} />} 
+        />
+        <Route path="/about-admin" element={<AdminIntroPage settings={settings} onRefresh={onRefreshSettings} />} />
+      </Routes>
+
+      {/* フッター（閲覧数表示） */}
+      <Footer 
+        siteViews={settings.siteTotalViews} 
+        adminViews={settings.adminIntroViews} 
+        showAdminViews={isAdminIntroPage} 
+      />
+
+      {/* 右下のフローティングロゴ */}
+      <Link 
+        to="/about-admin" 
+        className="floating-footer-logo"
+      >
+        <img src="/footer-logo.png" alt="Creative Studio" />
+      </Link>
+    </div>
   );
 }
 
