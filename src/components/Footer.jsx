@@ -21,7 +21,7 @@ const Footer = ({ siteViews = 0, adminViews = 0, showAdminViews = false }) => {
           )}
         </div>
         <div className="footer-copy">
-          &copy; 2024 豊南中2000年卒 交流ポータル
+          &copy; 2026 豊南中2000年卒 交流ポータル
         </div>
       </div>
     </footer>
